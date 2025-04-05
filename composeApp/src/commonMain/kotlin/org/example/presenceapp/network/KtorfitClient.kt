@@ -1,0 +1,28 @@
+package org.example.presenceapp.network
+
+import de.jensklingenberg.ktorfit.Ktorfit
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
+import org.example.presenceapp.data.remote.api.AttendanceApi
+
+object KtorfitClient {
+    private const val BASE_URL = "http://185.207.0.137:8080/"
+    private val json = Json { ignoreUnknownKeys = true }
+
+    private val ktorClient = HttpClient {
+        install(ContentNegotiation) {
+            json(json)
+        }
+    }
+
+    val instance: Ktorfit = Ktorfit.Builder()
+        .baseUrl(BASE_URL)
+        .httpClient(ktorClient)
+        .build()
+
+    fun createAttendanceApi(): AttendanceApi {
+        return instance.create<AttendanceApi>()
+    }
+}
