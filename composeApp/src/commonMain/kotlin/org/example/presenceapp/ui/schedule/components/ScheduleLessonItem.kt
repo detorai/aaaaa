@@ -51,13 +51,13 @@ fun ScheduleLessonItem(
                     .weight(1f)
             ) {
                 Text(text = lesson.subject, color = AppTheme.colors.black, style = AppTheme.typography.name)
-                Text(text = "Преподаватель: ${lesson.teacher}", color = AppTheme.colors.gray, style = AppTheme.typography.date)
-                Text(text = "Кабинет: ${lesson.room}", color = AppTheme.colors.gray, style = AppTheme.typography.date)
+                Text(text = "Преподаватель: ${lesson.teacher}", color = AppTheme.colors.black, style = AppTheme.typography.date)
+                Text(text = "Кабинет: ${lesson.room}", color = AppTheme.colors.black, style = AppTheme.typography.date)
             }
             Text(
                 text = lesson.time,
                 style = AppTheme.typography.date,
-                color = AppTheme.colors.gray,
+                color = AppTheme.colors.black,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
             )
