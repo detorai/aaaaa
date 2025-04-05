@@ -29,15 +29,13 @@ fun ScheduleDayText(
             abs(currentPage - index),
             1f
         ).coerceIn(0f, 1f),
-        animationSpec = tween(durationMillis = 150)
     )
     val textColor by animateColorAsState(
         targetValue = lerp(
             AppTheme.colors.black,
             AppTheme.colors.white,
             progress
-        ),
-        animationSpec = tween(durationMillis = 150)
+        )
     )
 
     Text(
