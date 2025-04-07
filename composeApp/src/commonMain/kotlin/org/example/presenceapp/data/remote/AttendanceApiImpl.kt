@@ -5,9 +5,9 @@ import org.example.presenceapp.data.remote.api.AttendanceApi
 import org.example.presenceapp.domain.models.Attendance
 import org.example.presenceapp.domain.models.AttendanceType
 
-class RemoteDataSource(private val api: AttendanceApi) {
+class AttendanceApiImpl(private val attendance: AttendanceApi) {
     suspend fun getWeeklyAttendance(groupId: Int): Map<String, List<Attendance>> {
-        val dtos = api.getGroupPresetting(groupId)
+        val dtos = attendance.getGroupPresetting(groupId)
         return dtos
             .groupBy { it.presenceDate }
             .mapValues { entry ->

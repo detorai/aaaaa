@@ -1,7 +1,6 @@
-package org.example.presenceapp.data.local.storage
+package org.example.presenceapp.data.local.storage.attendance
 
 import org.example.presenceapp.PlatformContext
-import org.example.presenceapp.data.local.storage.AttendanceStorage
 
 actual class AttendanceStorageProvider actual constructor(private val context: PlatformContext) {
     actual fun provide(): AttendanceStorage {

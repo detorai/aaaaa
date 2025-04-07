@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.2"
+agp = "8.9.1"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
@@ -33,6 +33,9 @@ kotlinx-datetime = "0.6.0"
 uiAndroid = "1.7.8"
 annotationJvm = "1.9.1"
 uiTextAndroid = "1.7.8"
+roomGradlePlugin = "2.7.0-rc03"
+roomCompiler = "2.7.0-rc03"
+roomRuntime = "2.7.0-rc03"
 
 
 
@@ -97,6 +100,9 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
 androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
+androidx-room-gradle-plugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "roomGradlePlugin" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 
 
 

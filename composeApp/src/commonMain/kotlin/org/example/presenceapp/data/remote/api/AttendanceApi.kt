@@ -8,12 +8,12 @@ import org.example.presenceapp.data.remote.dto.attendance.AttendanceRequestDto
 import org.example.presenceapp.data.remote.dto.attendance.AttendanceTypeDto
 
 interface AttendanceApi {
-    @POST("presence")
+    @POST("api/v1/presence")
     suspend fun submitPresences(@Body presences: List<AttendanceRequestDto>)
 
-    @GET("presence/presetting/{groupId}")
+    @GET("api/v1/presence/presetting/{groupId}")
     suspend fun getGroupPresetting(@Path("groupId") groupId: Int): List<AttendanceRequestDto>
 
-    @GET("presence/dictionary/attendance_type")
+    @GET("api/v1/presence/dictionary/attendance_type")
     suspend fun getAttendanceTypes(): List<AttendanceTypeDto>
 }

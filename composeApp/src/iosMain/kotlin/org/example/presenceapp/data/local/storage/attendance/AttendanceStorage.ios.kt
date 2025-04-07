@@ -1,9 +1,8 @@
-package org.example.presenceapp.data.local.storage
+package org.example.presenceapp.data.local.storage.attendance
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
-import org.example.presenceapp.data.local.storage.AttendanceStorage
 import platform.Foundation.NSUserDefaults
 
 class AttendanceStorageIos: AttendanceStorage {

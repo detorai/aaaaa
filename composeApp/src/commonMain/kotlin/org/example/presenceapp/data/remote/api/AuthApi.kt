@@ -6,6 +6,6 @@ import org.example.presenceapp.data.remote.dto.auth.AuthRequestDto
 import org.example.presenceapp.data.remote.dto.auth.AuthResponseDto
 
 interface AuthApi {
-    @POST("auth/login")
+    @POST("api/v1/auth/login")
     suspend fun login(@Body request: AuthRequestDto): AuthResponseDto
 }

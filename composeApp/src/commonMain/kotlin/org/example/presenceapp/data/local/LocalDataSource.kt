@@ -1,7 +1,7 @@
 package org.example.presenceapp.data.local
 
 import kotlinx.coroutines.flow.Flow
-import org.example.presenceapp.data.local.storage.AttendanceStorage
+import org.example.presenceapp.data.local.storage.attendance.AttendanceStorage
 
 class LocalDataSource(private val attendanceStorage: AttendanceStorage) {
 

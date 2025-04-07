@@ -12,7 +12,7 @@ enum class ScreenType {
 fun getScreenType(screenType: ScreenType): String {
     return when (screenType) {
         ScreenType.SCHEDULE -> "01.01"
-        ScreenType.GROUP -> SelectedLessonHolder.selectedLesson?.subject ?: ""
+        ScreenType.GROUP -> SelectedLessonHolder.selectedLesson?.subject?.name ?: ""
         ScreenType.CHAT -> "ChatName"
         ScreenType.BUTTON -> ""
     }

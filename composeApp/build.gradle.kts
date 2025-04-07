@@ -9,6 +9,17 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
+    id("app.cash.sqldelight") version "2.0.1"
+
+}
+
+sqldelight {
+    databases {
+        create("ScheduleDatabase") {
+            packageName = "org.example.presenceapp.db"
+
+        }
+    }
 }
 
 compose.resources {
@@ -45,6 +56,7 @@ kotlin {
     }
 
     sourceSets {
+        val sqldelightVersion = "2.0.1"
         val androidMain by getting {
             dependencies {
                 implementation(compose.preview)
@@ -62,6 +74,8 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.koin.androidx.compose)
                 implementation(libs.koin.ktor)
+
+                implementation("app.cash.sqldelight:android-driver:$sqldelightVersion")
             }
         }
 
@@ -97,6 +111,9 @@ kotlin {
 
                 // koin
                 implementation(libs.koin.core)
+
+                implementation("app.cash.sqldelight:runtime:$sqldelightVersion")
+                implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")
             }
         }
 
@@ -106,6 +123,9 @@ kotlin {
 
             // koin
             implementation(libs.koin.core.native)
+
+            //sqldelight
+            implementation("app.cash.sqldelight:native-driver:$sqldelightVersion")
 
             implementation(libs.kotlinx.coroutines.core.v173nativemt)
             implementation(libs.kermit)

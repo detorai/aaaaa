@@ -70,7 +70,6 @@ fun Schedule(screenModel: ScheduleScreenModel) {
             topBar = { CommonTopBar(
                 screenType = ScreenType.SCHEDULE,
             ) },
-            bottomBar = { CommonBottomBar() }
         ) { padding ->
             Column(
                 modifier = Modifier
@@ -83,8 +82,10 @@ fun Schedule(screenModel: ScheduleScreenModel) {
                     indicatorColor = AppTheme.colors.black
                 )
                 HorizontalPager(state = pagerState) { page ->
+                    val day = page + 1
                     ScheduleLessonList(
-                        lessons = lessons,
+                        lessons = lessons.filter { it.dayOfWeek == day }
+                            .sortedBy { it.lessonNumber },
                         onLessonClick = {
                                 lesson -> screenModel.selectLesson(lesson)
                             navigator.push(AttendanceScreen(lesson))

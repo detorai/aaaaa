@@ -1,4 +1,4 @@
-package org.example.presenceapp.data.local.storage
+package org.example.presenceapp.data.local.storage.attendance
 
 import kotlinx.coroutines.flow.Flow
 

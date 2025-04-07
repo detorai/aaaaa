@@ -4,18 +4,18 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.example.presenceapp.someData.Lesson
 import org.example.presenceapp.someData.SampleData
+import org.example.presenceapp.someData.Schedule
 
 class ScheduleScreenModel: ScreenModel {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _lessons = MutableStateFlow<List<Lesson>>(emptyList())
-    val lessons: StateFlow<List<Lesson>> = _lessons.asStateFlow()
+    private val _lessons = MutableStateFlow<List<Schedule>>(emptyList())
+    val lessons: StateFlow<List<Schedule>> = _lessons.asStateFlow()
 
-    private val _selectedLesson = MutableStateFlow<Lesson?>(null)
-    val selectedLesson: StateFlow<Lesson?> = _selectedLesson.asStateFlow()
+    private val _selectedLesson = MutableStateFlow<Schedule?>(null)
+    val selectedLesson: StateFlow<Schedule?> = _selectedLesson.asStateFlow()
 
     private val _currentDayIndex = MutableStateFlow(0)
     val currentDayIndex: StateFlow<Int> = _currentDayIndex.asStateFlow()
@@ -36,7 +36,7 @@ class ScheduleScreenModel: ScreenModel {
         }
     }
 
-    fun selectLesson(lesson: Lesson) {
+    fun selectLesson(lesson: Schedule) {
         _selectedLesson.value = lesson
     }
 

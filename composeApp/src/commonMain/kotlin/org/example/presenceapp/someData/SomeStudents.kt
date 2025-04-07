@@ -5,11 +5,16 @@ data class Student(
     val name: String
 )
 
-data class Lesson(
-    val time: String,
-    val subject: String,
-    val teacher: String,
-    val room: String
+data class Schedule(
+    val id: Int,
+    val lessonNumber: Int,
+    val audience: String,
+    val subject: Subject,
+    val dayOfWeek: Int,
+)
+data class Subject(
+    val id: Int,
+    val name: String
 )
 
 class SomeStudents {
@@ -31,12 +36,13 @@ class SomeStudents {
 
 object SampleData {
     val lessons = listOf(
-        Lesson("09:00", "Subject 1", "Teacher 1", "101"),
-        Lesson("09:55", "Subject 2", "Teacher 2", "202"),
-        Lesson("10:50", "Subject 3", "Teacher 3", "303")
+        Schedule(1, 1, "101", Subject(1, "Математика"), 1),
+        Schedule(2, 2, "202", Subject(2, "Физика"), 1),
+        Schedule(3, 1, "305", Subject(3, "Химия"), 3)
     )
+    val lessonTimes = listOf("9:00", "9:55", "10:50", "11:55", "13:00", "14:00", "14:55", "15:45")
 }
 
 object SelectedLessonHolder {
-    var selectedLesson: Lesson? = null
+    var selectedLesson: Schedule? = null
 }

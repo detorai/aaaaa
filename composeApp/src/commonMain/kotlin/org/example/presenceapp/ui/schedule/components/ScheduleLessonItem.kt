@@ -16,14 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.presenceapp.someData.Lesson
+import org.example.presenceapp.someData.SampleData.lessonTimes
+import org.example.presenceapp.someData.Schedule
 import org.example.presenceapp.ui.theme.AppTheme
 
 @Composable
 fun ScheduleLessonItem(
-    lesson: Lesson,
+    lesson: Schedule,
     index: Int,
-    onLessonClick: (Lesson) -> Unit
+    onLessonClick: (Schedule) -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -50,12 +51,11 @@ fun ScheduleLessonItem(
                 modifier = Modifier
                     .weight(1f)
             ) {
-                Text(text = lesson.subject, color = AppTheme.colors.black, style = AppTheme.typography.name)
-                Text(text = "Преподаватель: ${lesson.teacher}", color = AppTheme.colors.black, style = AppTheme.typography.date)
-                Text(text = "Кабинет: ${lesson.room}", color = AppTheme.colors.black, style = AppTheme.typography.date)
+                Text(text = lesson.subject.name, color = AppTheme.colors.black, style = AppTheme.typography.name)
+                Text(text = "Кабинет: ${lesson.audience}", color = AppTheme.colors.black, style = AppTheme.typography.date)
             }
             Text(
-                text = lesson.time,
+                text = lessonTimes.getOrNull(lesson.lessonNumber - 1) ?: "",
                 style = AppTheme.typography.date,
                 color = AppTheme.colors.black,
                 modifier = Modifier
