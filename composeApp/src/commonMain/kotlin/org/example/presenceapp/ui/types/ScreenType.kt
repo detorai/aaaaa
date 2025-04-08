@@ -4,16 +4,12 @@ import org.example.presenceapp.someData.SelectedLessonHolder
 
 enum class ScreenType {
     SCHEDULE,
-    GROUP,
-    CHAT,
-    BUTTON
+    GROUP
 }
 
 fun getScreenType(screenType: ScreenType): String {
     return when (screenType) {
-        ScreenType.SCHEDULE -> "01.01"
+        ScreenType.SCHEDULE -> ""
         ScreenType.GROUP -> SelectedLessonHolder.selectedLesson?.subject?.name ?: ""
-        ScreenType.CHAT -> "ChatName"
-        ScreenType.BUTTON -> ""
     }
 }

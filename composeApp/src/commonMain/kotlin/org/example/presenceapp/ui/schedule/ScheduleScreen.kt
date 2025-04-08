@@ -18,6 +18,11 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.plus
+import org.example.presenceapp.someData.CurrentDay
 import org.example.presenceapp.someData.Schedule
 import org.example.presenceapp.someData.Student
 import org.example.presenceapp.ui.attendance.AttendanceScreen
@@ -27,8 +32,9 @@ import org.example.presenceapp.ui.schedule.components.ScheduleDaySelector
 import org.example.presenceapp.ui.schedule.components.ScheduleLessonList
 import org.example.presenceapp.ui.theme.AppTheme
 import org.example.presenceapp.ui.types.ScreenType
+import org.example.project.domain.models.Week
 
-data class ScheduleScreen(private val lessons: List<Schedule>, private val students: List<Student>): Screen {
+data class ScheduleScreen(private val lessons: List<Schedule>, private val students: List<Student>, private val week: Week): Screen {
     @Composable
     override fun Content() {
         val screenModel = rememberScreenModel { ScheduleScreenModel() }
@@ -45,6 +51,7 @@ data class ScheduleScreen(private val lessons: List<Schedule>, private val stude
             pageCount = { daysOfWeek.size }
         )
         val currentPage = pagerState.currentPage + pagerState.currentPageOffsetFraction
+
 
         LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.isScrollInProgress }
@@ -70,6 +77,7 @@ data class ScheduleScreen(private val lessons: List<Schedule>, private val stude
                 topBar = {
                     CommonTopBar(
                         screenType = ScreenType.SCHEDULE,
+                        text = week.startDate.plus(currentPage.toInt(), DateTimeUnit.DAY).toString()
                     )
                 },
             ) { padding ->

@@ -30,7 +30,8 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun CommonTopBar(
     screenType: ScreenType,
-    onChangeSortType: ((AttendanceScreenModel.SortType) -> Unit)? = null
+    onChangeSortType: ((AttendanceScreenModel.SortType) -> Unit)? = null,
+    text: String
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val selectedIconState = remember { mutableStateOf(false) }
@@ -54,7 +55,7 @@ fun CommonTopBar(
             modifier = Modifier
         )
         Text(
-            text = getScreenType(screenType),
+            text = text,
             color = AppTheme.colors.black,
             style = AppTheme.typography.name,
             textAlign = TextAlign.Center,

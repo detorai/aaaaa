@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.example.presenceapp.ui.theme.AppTheme
 
 @Composable
 fun ScheduleCard(
@@ -36,8 +37,9 @@ fun ScheduleCard(
     ) {
         Text(
             text,
-            color = Color(0xFF2c2c2c),
-            modifier = Modifier.padding(start = 17.19.dp)
+            color = AppTheme.colors.black,
+            modifier = Modifier.padding(start = 17.19.dp),
+            style = AppTheme.typography.message
         )
     }
 }

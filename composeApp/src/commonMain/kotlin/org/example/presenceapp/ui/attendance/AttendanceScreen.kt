@@ -65,7 +65,8 @@ class AttendanceScreen(private val selectedLesson: Schedule, private val group: 
                         screenType = ScreenType.GROUP,
                         onChangeSortType = { newSortType ->
                             screenModel.changeSortType(newSortType)
-                        }
+                        },
+                        text = SelectedLessonHolder.selectedLesson?.subject?.name ?: ""
                     )
                 }
             ) { padding ->

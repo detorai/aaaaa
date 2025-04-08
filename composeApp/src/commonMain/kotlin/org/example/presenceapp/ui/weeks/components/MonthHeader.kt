@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kotlinx.datetime.Month
+import org.example.presenceapp.ui.theme.AppTheme
 import org.example.project.domain.models.toRussianName
 
 @Composable
@@ -12,6 +13,8 @@ import org.example.project.domain.models.toRussianName
         Text(
             text = month.toRussianName(),
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            style = AppTheme.typography.name,
+            color = AppTheme.colors.black
         )
     }

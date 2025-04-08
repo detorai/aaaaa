@@ -1,5 +1,11 @@
 package org.example.presenceapp.someData
 
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
+import org.example.project.domain.models.Week
+import org.example.project.domain.models.displayName
+
 data class Student(
     val id: Int,
     val name: String
@@ -45,4 +51,20 @@ object SampleData {
 
 object SelectedLessonHolder {
     var selectedLesson: Schedule? = null
+}
+object CurrentDay{
+    data class WeekDay(
+        val date: LocalDate,
+        val displayName: String
+    )
+
+    fun generateWeekDays(startDate: LocalDate): List<WeekDay> {
+        return (0 until 6).map {
+            val date = startDate.plus(it.toLong(), DateTimeUnit.DAY)
+            WeekDay(
+                date = date,
+                displayName = date.dayOfWeek.displayName()
+            )
+        }
+    }
 }

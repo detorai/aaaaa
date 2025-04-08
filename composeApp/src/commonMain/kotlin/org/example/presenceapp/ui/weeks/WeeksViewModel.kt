@@ -1,40 +1,50 @@
 package org.example.project.ui.weeks
 
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import org.example.project.domain.models.DaysOfWeek
-import org.example.project.domain.models.MonthWithWeek
-
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
+import org.example.project.domain.models.MonthWithWeeks
+import org.example.project.domain.models.Week
 
 
 class WeeksViewModel: ScreenModel {
-    val list = listOf(
-        DaysOfWeek(
-            first_date = LocalDate(2025, Month.MARCH, 24),
-            last_date = LocalDate(2025,Month.MARCH,28)
-        ),
-        DaysOfWeek(
-            first_date = LocalDate(2025, Month.APRIL, 24),
-            last_date = LocalDate(2025,Month.MAY,28)
-        ),
-        DaysOfWeek(
-            first_date = LocalDate(2025, Month.APRIL, 17),
-            last_date = LocalDate(2025,Month.APRIL,21)
-        ),
-        DaysOfWeek(
-            first_date = LocalDate(2025, Month.MAY, 24),
-            last_date = LocalDate(2025,Month.MAY,28)
-        )
-    )
-    val state = MutableStateFlow(WeeksScreenState(data = MonthWithWeek(list)))
+    val state = MutableStateFlow(WeeksScreenState())
+
+    init {
+        loadWeeks()
+    }
+
+    private fun loadWeeks() {
+        val weeks = getWeeksInCurrentMonth().map { (start, end) ->
+            Week(
+                startDate = start,
+                endDate = end
+            )
+        }
+
+        val currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault()).month
+        val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
+
+        state.update {
+            it.copy(
+                data = listOf(
+                    MonthWithWeeks(
+                        month = currentMonth,
+                        year = currentYear,
+                        weeks = weeks
+                    )
+                )
+            )
+        }
+    }
 
     fun resetError(){
         state.update {
@@ -44,35 +54,36 @@ class WeeksViewModel: ScreenModel {
         }
     }
 
-//    fun getWeeksInCurrentMonth(): List<Pair<LocalDate, LocalDate>> {
-//        val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-//        val firstDayOfMonth = LocalDate(today.year, today.month, 1)
-//        val lastDayOfMonth = LocalDate()
-//
-//        val weeks = mutableListOf<Pair<LocalDate, LocalDate>>()
-//
-//        var currentWeekStart = firstDayOfMonth
-//        if (currentWeekStart.dayOfWeek != DayOfWeek.MONDAY) {
-//            currentWeekStart = firstDayOfMonth.minus((currentWeekStart.dayOfWeek.number - DayOfWeek.MONDAY.value).toLong())
-//        }
-//
-//        while (currentWeekStart <= lastDayOfMonth) {
-//            var currentWeekEnd = currentWeekStart.plus(6)
-//
-//            // Если конец недели выходит за пределы месяца, корректируем
-//            if (currentWeekEnd > lastDayOfMonth) {
-//                currentWeekEnd = lastDayOfMonth
-//            }
-//
-//            weeks.add(currentWeekStart to currentWeekEnd)
-//
-//            currentWeekStart = currentWeekEnd.plus(1)
-//            // Если следующая неделя начинается в следующем месяце, выходим
-//            if (currentWeekStart.month != today.month) {
-//                break
-//            }
-//        }
-//
-//        return weeks
-//    }
+    fun getWeeksInCurrentMonth(): List<Pair<LocalDate, LocalDate>> {
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val firstDayOfMonth = LocalDate(today.year, today.month, 1)
+        val lastDayOfMonth = firstDayOfMonth.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
+
+        val weeks = mutableListOf<Pair<LocalDate, LocalDate>>()
+        var currentWeekStart = firstDayOfMonth.findPreviousMonday()
+
+        while (currentWeekStart <= lastDayOfMonth.plus(6, DateTimeUnit.DAY)) {
+            val currentWeekEnd = currentWeekStart.plus(6, DateTimeUnit.DAY)
+
+            // Добавляем неделю только если она пересекается с текущим месяцем
+            if (currentWeekStart <= lastDayOfMonth || currentWeekEnd >= firstDayOfMonth) {
+                val weekStart = maxOf(currentWeekStart, firstDayOfMonth)
+                val weekEnd = minOf(currentWeekEnd, lastDayOfMonth)
+
+                weeks.add(weekStart to weekEnd)
+            }
+
+            currentWeekStart = currentWeekEnd.plus(1, DateTimeUnit.DAY)
+        }
+
+        return weeks.distinctBy { it.first }
+    }
+
+    private fun LocalDate.findPreviousMonday(): LocalDate {
+        var date = this
+        while (date.dayOfWeek != DayOfWeek.MONDAY) {
+            date = date.minus(1, DateTimeUnit.DAY)
+        }
+        return date
+    }
 }

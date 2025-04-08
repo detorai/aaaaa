@@ -3,11 +3,14 @@ package org.example.project.domain.models
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 
-data class DaysOfWeek(
-    val first_date: LocalDate,
-    val last_date: LocalDate
+data class MonthWithWeeks(
+    val month: Month,
+    val year: Int,
+    val weeks: List<Week>
 )
-data class MonthWithWeek(
-    val weekList: List<DaysOfWeek>
+
+data class Week(
+    val startDate: LocalDate,
+    val endDate: LocalDate,
 )
 
