@@ -9,17 +9,17 @@ class AttendanceRepository(
     private val localDataSource: LocalDataSource,
     private val attendanceApiImpl: AttendanceApiImpl
 ) {
-    suspend fun saveAttendanceLocally(map: Map<String, String>) {
+    suspend fun saveAttendanceLocally(map: Map<Int, String>) {
         localDataSource.saveAttendance(map)
     }
 
-    fun observeLocalAttendance(): Flow<Map<String, String>> {
+    fun observeLocalAttendance(): Flow<Map<Int, String>> {
         return localDataSource.observeAttendance()
     }
 
-    suspend fun getWeeklyAttendance(groupId: Int): Map<String, List<Attendance>> {
-        return attendanceApiImpl.getWeeklyAttendance(groupId)
-    }
+//    suspend fun getWeeklyAttendance(groupId: Int): Map<String, List<Attendance>> {
+//        return attendanceApiImpl.getWeeklyAttendance(groupId)
+//    }
 
     suspend fun syncWithServer() {
 

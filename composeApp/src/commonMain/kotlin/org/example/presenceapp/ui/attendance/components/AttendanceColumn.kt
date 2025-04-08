@@ -39,13 +39,13 @@ import org.example.presenceapp.ui.theme.AppTheme
 @Composable
 fun AttendanceColumn(
     modifier: Modifier,
-    screenModel: AttendanceScreenModel
+    screenModel: AttendanceScreenModel,
 ) {
     val groups by screenModel.groupedStudents.collectAsState()
     val attendanceMap by screenModel.attendanceMap.collectAsState()
 
-    var expanded by remember { mutableStateOf<String?>(null) }
-    val selectedStudents = remember { mutableStateOf<Set<String>>(emptySet()) }
+    var expanded by remember { mutableStateOf<Int?>(null) }
+    val selectedStudents = remember { mutableStateOf<Set<Int>>(emptySet()) }
     var isSelectionMode by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.example.presenceapp.ui.theme.AppTheme
 
 @Composable
 fun PresenceTextField(
@@ -24,7 +25,8 @@ fun PresenceTextField(
     ) {
         Text(
             text,
-            color = Color(0xFF2c2c2c)
+            color = AppTheme.colors.black,
+            style = AppTheme.typography.regular
         )
         OutlinedTextField(
             value = value,
@@ -34,7 +36,8 @@ fun PresenceTextField(
             placeholder = {
                 Text(
                     placeholder,
-                    color = Color(0xFFd9d9d9)
+                    color = AppTheme.colors.gray,
+                    style = AppTheme.typography.message
                 )
             }
         )

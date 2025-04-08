@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,12 +34,20 @@ fun ScheduleLessonList(lessons: List<Schedule>,
                 }
             }
         } else {
-            itemsIndexed(lessons) { index, lesson ->
-                ScheduleLessonItem(
-                    lesson = lesson,
-                    index = index,
-                    onLessonClick = onLessonClick
-                )
+            items(8) { index ->
+                val lessonNumber = index + 1
+                val lesson = lessons.firstOrNull{it.lessonNumber == lessonNumber}
+                if (lesson !=  null) {
+                    ScheduleLessonItem(
+                        lesson = lesson,
+                        index = lessonNumber,
+                        onLessonClick = onLessonClick
+                    )
+                } else  {
+                    EmptyScheduleLessonsItem(
+                        lessonNumber
+                    )
+                }
             }
         }
     }

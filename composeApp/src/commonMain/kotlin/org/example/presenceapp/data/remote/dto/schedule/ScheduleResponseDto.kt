@@ -2,6 +2,8 @@ package org.example.presenceapp.data.remote.dto.schedule
 
 import kotlinx.serialization.Serializable
 
+
+
 @Serializable
 data class ScheduleResponseDto(
     val id: Int,

@@ -10,6 +10,8 @@ import org.example.presenceapp.data.remote.dto.auth.UserResponse
 import org.example.presenceapp.data.repository.LoginRepository
 import org.example.presenceapp.data.repository.ScheduleRepository
 import org.example.presenceapp.domain.models.ResponseState
+import org.example.presenceapp.someData.Schedule
+import org.example.presenceapp.someData.Student
 
 
 class LoginViewModel(private val authRepository: LoginRepository, private val scheduleRepository: ScheduleRepository): ScreenModel {
@@ -54,18 +56,17 @@ class LoginViewModel(private val authRepository: LoginRepository, private val sc
                     is ResponseState.Success<*> -> {
                         val userResponse = (response.data as UserResponse)
                         val groupId = userResponse.responsible.first().group.id
+                        getSchedule(groupId)
+                        getStudents(groupId)
                         state.update {
                             it.copy(
-                                success = true,
                                 groupId = groupId
                             )
                         }
-                        getSchedule(state.value.groupId)
                     }
                     is ResponseState.Error -> {
                         state.update {
                             it.copy(
-                                success = false,
                                 error = response.error
                             )
                         }
@@ -80,11 +81,41 @@ class LoginViewModel(private val authRepository: LoginRepository, private val sc
             result.collect{response ->
                 when (response) {
                     is ResponseState.Success<*> -> {
-
+                        state.update{
+                            it.copy(
+                                success = true,
+                                lessonsList = response.data as List<Schedule>
+                            )
+                        }
                     }
                     is ResponseState.Error -> {
                         state.update{
                             it.copy(
+
+                                error = response.error
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    fun getStudents(groupId: Int){
+        screenModelScope.launch {
+            val result = scheduleRepository.getStudents(groupId)
+            result.collect{response ->
+                when (response) {
+                    is ResponseState.Success<*> -> {
+                        state.update{
+                            it.copy(
+                                groupList = response.data as List<Student>
+                            )
+                        }
+                    }
+                    is ResponseState.Error -> {
+                        state.update{
+                            it.copy(
+                                success = true,
                                 error = response.error
                             )
                         }

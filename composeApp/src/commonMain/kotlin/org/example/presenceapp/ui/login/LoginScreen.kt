@@ -21,6 +21,7 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.example.presenceapp.ui.commons.ErrorDialog
+import org.example.presenceapp.ui.theme.AppTheme
 import org.example.project.ui.common.CheckBoxRow
 import org.example.project.ui.common.PresenceButton
 import org.example.project.ui.common.PresenceTextField
@@ -37,7 +38,7 @@ class LoginScreen: Screen {
 
         LaunchedEffect(state.success) {
             if (state.success) {
-                navigator.push(WeeksScreen())
+                navigator.push(WeeksScreen(state.lessonsList, state.groupList))
             }
         }
         Login(viewModel)
@@ -49,7 +50,7 @@ class LoginScreen: Screen {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().background(Color.White).padding(horizontal = 32.dp)
+            modifier = Modifier.fillMaxSize().background(AppTheme.colors.white).padding(horizontal = 32.dp)
         ) {
             state.error?.let {
                 ErrorDialog(
@@ -64,8 +65,9 @@ class LoginScreen: Screen {
             ) {
                 Text(
                     "Добро пожаловать!",
-                    color = Color(0xFF2c2c2c),
-                    textAlign = TextAlign.Center
+                    color = AppTheme.colors.black,
+                    textAlign = TextAlign.Center,
+                    style = AppTheme.typography.main
                 )
                 PresenceTextField(
                     value = state.login,

@@ -1,5 +1,6 @@
 package org.example.project.ui.weeks
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,19 +19,21 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.example.presenceapp.someData.Schedule
+import org.example.presenceapp.someData.Student
 import org.example.presenceapp.ui.commons.CommonBottomBar
 import org.example.presenceapp.ui.commons.ErrorDialog
 import org.example.presenceapp.ui.schedule.ScheduleScreen
+import org.example.presenceapp.ui.theme.AppTheme
 import org.example.presenceapp.ui.weeks.components.MonthHeader
 import org.example.presenceapp.ui.weeks.components.ScheduleCard
 import org.example.project.domain.models.formatWeek
 
-class WeeksScreen: Screen {
+data class WeeksScreen(private val lessons: List<Schedule>, private val students: List<Student>): Screen {
     @Composable
     override fun Content() {
         val navigator  = LocalNavigator.currentOrThrow
         val viewModel = rememberScreenModel { WeeksViewModel() }
-
         Scaffold(
             bottomBar = {
                 CommonBottomBar()
@@ -50,7 +53,7 @@ class WeeksScreen: Screen {
                 .sortedByDescending { (month, _) -> month }
         }
         Column(
-            modifier = Modifier.fillMaxSize().padding(32.dp)
+            modifier = Modifier.fillMaxSize().background(AppTheme.colors.white).padding(32.dp)
         ) {
             state.error?.let {
                 ErrorDialog(
@@ -65,7 +68,7 @@ class WeeksScreen: Screen {
                     }
                     items(weeks.sortedByDescending { it.first_date }) { week ->
                         ScheduleCard(text = week.formatWeek(), onClick = {
-                            navigator.push(ScheduleScreen())
+                            navigator.push(ScheduleScreen(lessons, students))
                         })
                         Spacer(Modifier.height(10.dp))
                     }

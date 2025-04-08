@@ -22,6 +22,8 @@ import com.presenceapp.composeapp.resources.Res
 import com.presenceapp.composeapp.resources.info
 import com.presenceapp.composeapp.resources.schedule
 import com.presenceapp.composeapp.resources.settings
+import org.example.presenceapp.someData.Schedule
+import org.example.presenceapp.someData.Student
 import org.example.presenceapp.ui.info.InfoScreen
 import org.example.presenceapp.ui.schedule.ScheduleScreen
 import org.example.presenceapp.ui.settings.SettingsScreen
@@ -33,9 +35,11 @@ import org.jetbrains.compose.resources.painterResource
 fun CommonBottomBar() {
     val navigator = LocalNavigator.currentOrThrow
     val currentScreen = navigator.lastItem
+    val lessons = emptyList<Schedule>()
+    val students = emptyList<Student>()
     val routes = listOf(
         Triple(Res.drawable.info, "Информация", InfoScreen()),
-        Triple(Res.drawable.schedule, "Расписание", WeeksScreen()),
+        Triple(Res.drawable.schedule, "Расписание", WeeksScreen(lessons, students)),
         Triple(Res.drawable.settings, "Настройки", SettingsScreen())
     )
 

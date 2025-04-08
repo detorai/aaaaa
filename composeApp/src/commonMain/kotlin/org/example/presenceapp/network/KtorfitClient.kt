@@ -11,6 +11,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.example.presenceapp.data.remote.api.AttendanceApi
 import org.example.presenceapp.data.remote.api.AuthApi
+import org.example.presenceapp.data.remote.api.GroupApi
 
 object KtorfitClient {
     private const val BASE_URL = "http://185.207.0.137:8080/"
@@ -35,8 +36,8 @@ object KtorfitClient {
         return instance.create<AuthApi>()
     }
 
-    fun createScheduleApi(): AuthApi {
-        return instance.create<AuthApi>()
+    fun createScheduleApi(): GroupApi {
+        return instance.create<GroupApi>()
     }
 
     fun createAttendanceApi(): AttendanceApi {

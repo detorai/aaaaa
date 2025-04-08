@@ -14,17 +14,17 @@ class AttendanceStorageAndroid(private val context: Context): AttendanceStorage 
 
     private val ATTENDANCE_KEY = stringPreferencesKey("attendance_map")
 
-    override suspend fun saveAttendanceMap(map: Map<String, String>) {
+    override suspend fun saveAttendanceMap(map: Map<Int, String>) {
         val json = Json.encodeToString(map)
         context.attendanceDataStore.edit { prefs ->
             prefs[ATTENDANCE_KEY] = json
         }
     }
 
-    override fun attendanceMapFlow(): Flow<Map<String, String>> {
+    override fun attendanceMapFlow(): Flow<Map<Int, String>> {
         return context.attendanceDataStore.data.map { prefs ->
             prefs[ATTENDANCE_KEY]?.let {
-                Json.decodeFromString<Map<String, String>>(it)
+                Json.decodeFromString<Map<Int, String>>(it)
             } ?: emptyMap()
         }
     }

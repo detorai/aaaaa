@@ -8,17 +8,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.presenceapp.someData.SomeStudents
 import org.example.presenceapp.data.repository.AttendanceRepository
+import org.example.presenceapp.someData.Student
 
 class AttendanceScreenModel(
     private val attendanceRepository: AttendanceRepository
 ) : ScreenModel {
 
-    private val _students = MutableStateFlow(SomeStudents().students)
-    private val _attendanceMap = MutableStateFlow<Map<String, String>>(emptyMap())
-    val attendanceMap: StateFlow<Map<String, String>> = _attendanceMap.asStateFlow()
+    val state = MutableStateFlow(AttendanceScreenState())
+    private val _students = MutableStateFlow(state.value.groupList)
+    private val _attendanceMap = MutableStateFlow<Map<Int, String>>(emptyMap())
+    val attendanceMap: StateFlow<Map<Int, String>> = _attendanceMap.asStateFlow()
 
     private val _sortType = MutableStateFlow(SortType.BY_PRESENCE)
 
@@ -44,7 +47,7 @@ class AttendanceScreenModel(
         }
     }
 
-    private suspend fun saveAttendanceToStorage(map: Map<String, String>) {
+    private suspend fun saveAttendanceToStorage(map: Map<Int, String>) {
         attendanceRepository.saveAttendanceLocally(map)
     }
 
@@ -69,7 +72,7 @@ class AttendanceScreenModel(
         }
     }.stateIn(screenModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun updateAttendance(studentId: String, status: String) {
+    fun updateAttendance(studentId: Int, status: String) {
         val updatedMap = _attendanceMap.value.toMutableMap().apply {
             this[studentId] = status
         }
@@ -79,7 +82,7 @@ class AttendanceScreenModel(
         }
     }
 
-    fun updateAttendanceForSelected(studentIds: Set<String>, status: String) {
+    fun updateAttendanceForSelected(studentIds: Set<Int>, status: String) {
         val updatedMap = _attendanceMap.value.toMutableMap().apply {
             studentIds.forEach { studentId ->
                 this[studentId] = status
@@ -93,5 +96,13 @@ class AttendanceScreenModel(
 
     fun changeSortType(newSortType: SortType) {
         _sortType.value = newSortType
+    }
+
+    fun getGroup(group: List<Student>){
+        state.update {
+            it.copy(
+                groupList = group
+            )
+        }
     }
 }
