@@ -2,8 +2,8 @@ package org.example.presenceapp.data.remote.api
 
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.POST
-import org.example.presenceapp.data.remote.dto.auth.AuthRequestDto
-import org.example.presenceapp.data.remote.dto.auth.AuthResponseDto
+import org.example.presenceapp.data.model.dto.auth.AuthRequestDto
+import org.example.presenceapp.data.model.dto.auth.AuthResponseDto
 
 interface AuthApi {
     @POST("api/v1/auth/login")

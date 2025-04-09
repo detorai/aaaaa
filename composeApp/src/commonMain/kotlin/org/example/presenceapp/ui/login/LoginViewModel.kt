@@ -5,16 +5,20 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.presenceapp.data.remote.dto.auth.AuthRequestDto
-import org.example.presenceapp.data.remote.dto.auth.UserResponse
+import org.example.presenceapp.data.model.dto.auth.AuthRequestDto
+import org.example.presenceapp.data.model.dto.auth.UserResponse
 import org.example.presenceapp.data.repository.LoginRepository
 import org.example.presenceapp.data.repository.ScheduleRepository
+import org.example.presenceapp.domain.models.Attendance
 import org.example.presenceapp.domain.models.ResponseState
-import org.example.presenceapp.someData.Schedule
-import org.example.presenceapp.someData.Student
+import org.example.presenceapp.domain.someData.Schedule
+import org.example.presenceapp.domain.someData.Student
 
 
-class LoginViewModel(private val authRepository: LoginRepository, private val scheduleRepository: ScheduleRepository): ScreenModel {
+class LoginViewModel(
+    private val authRepository: LoginRepository,
+    private val scheduleRepository: ScheduleRepository
+): ScreenModel {
     val state = MutableStateFlow(LoginScreenState())
 
 
@@ -58,9 +62,10 @@ class LoginViewModel(private val authRepository: LoginRepository, private val sc
                         val groupId = userResponse.responsible.first().group.id
                         getSchedule(groupId)
                         getStudents(groupId)
+                        getGroupPresence(groupId)
                         state.update {
                             it.copy(
-                                groupId = groupId
+                                groupId = groupId,
                             )
                         }
                     }
@@ -83,7 +88,6 @@ class LoginViewModel(private val authRepository: LoginRepository, private val sc
                     is ResponseState.Success<*> -> {
                         state.update{
                             it.copy(
-                                success = true,
                                 lessonsList = response.data as List<Schedule>
                             )
                         }
@@ -91,7 +95,6 @@ class LoginViewModel(private val authRepository: LoginRepository, private val sc
                     is ResponseState.Error -> {
                         state.update{
                             it.copy(
-
                                 error = response.error
                             )
                         }
@@ -115,7 +118,30 @@ class LoginViewModel(private val authRepository: LoginRepository, private val sc
                     is ResponseState.Error -> {
                         state.update{
                             it.copy(
-                                success = true,
+                                error = response.error
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    fun getGroupPresence(groupId: Int){
+        screenModelScope.launch {
+            val result = scheduleRepository.getGroupPresence(groupId)
+            result.collect{response ->
+                when (response) {
+                    is ResponseState.Success<*> -> {
+                        state.update{
+                            it.copy(
+                                groupPresence = response.data as List<Attendance>,
+                                success = true
+                            )
+                        }
+                    }
+                    is ResponseState.Error -> {
+                        state.update{
+                            it.copy(
                                 error = response.error
                             )
                         }

@@ -1,8 +1,8 @@
 package org.example.presenceapp.ui.schedule
 
 import kotlinx.datetime.LocalDate
-import org.example.presenceapp.someData.CurrentDay.WeekDay
-import org.example.presenceapp.someData.Schedule
+import org.example.presenceapp.domain.someData.Schedule
+import org.example.presenceapp.domain.someData.WeekDay
 import org.example.project.domain.models.Week
 
 data class ScheduleScreenState(

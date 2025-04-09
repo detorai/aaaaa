@@ -4,8 +4,8 @@ import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.Path
-import org.example.presenceapp.data.remote.dto.attendance.AttendanceRequestDto
-import org.example.presenceapp.data.remote.dto.attendance.AttendanceTypeDto
+import org.example.presenceapp.data.model.dto.attendance.AttendanceRequestDto
+import org.example.presenceapp.data.model.dto.attendance.AttendanceTypeDto
 
 interface AttendanceApi {
     @POST("api/v1/presence")

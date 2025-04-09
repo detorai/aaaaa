@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.example.presenceapp.someData.SampleData
-import org.example.presenceapp.someData.Schedule
+import org.example.presenceapp.domain.someData.SampleData
+import org.example.presenceapp.domain.someData.Schedule
 
 class ScheduleScreenModel: ScreenModel {
     val state = MutableStateFlow(ScheduleScreenState())

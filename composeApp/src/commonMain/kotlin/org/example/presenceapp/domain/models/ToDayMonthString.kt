@@ -1,11 +1,11 @@
 package org.example.project.domain.models
 
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
-import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.number
-import org.example.presenceapp.someData.CurrentDay
 
 
 fun Week.formatWeek(): String {
@@ -33,13 +33,7 @@ val russianMonths = mapOf(
 fun Month.toRussianName(): String = russianMonths[this] ?: name
 
 
-fun DayOfWeek.displayName(): String = when (this) {
-    DayOfWeek.MONDAY -> "Пн"
-    DayOfWeek.TUESDAY -> "Вт"
-    DayOfWeek.WEDNESDAY -> "Ср"
-    DayOfWeek.THURSDAY -> "Чт"
-    DayOfWeek.FRIDAY -> "Пт"
-    DayOfWeek.SATURDAY -> "Сб"
-    DayOfWeek.SUNDAY -> "Вс"
-    else -> {}
-}.toString()
+fun LocalDate.formatDay(): String {
+    val currentDay = "${dayOfMonth.toString().padStart(2, '0')}.${month.number.toString().padStart(2, '0')}"
+    return currentDay
+}

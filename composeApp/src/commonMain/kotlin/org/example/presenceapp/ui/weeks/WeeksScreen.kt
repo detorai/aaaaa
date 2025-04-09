@@ -23,8 +23,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.example.presenceapp.someData.Schedule
-import org.example.presenceapp.someData.Student
+import org.example.presenceapp.domain.models.Attendance
+import org.example.presenceapp.domain.someData.Schedule
+import org.example.presenceapp.domain.someData.Student
 import org.example.presenceapp.ui.commons.CommonBottomBar
 import org.example.presenceapp.ui.commons.ErrorDialog
 import org.example.presenceapp.ui.schedule.ScheduleScreen
@@ -33,7 +34,11 @@ import org.example.presenceapp.ui.weeks.components.MonthHeader
 import org.example.presenceapp.ui.weeks.components.ScheduleCard
 import org.example.project.domain.models.formatWeek
 
-data class WeeksScreen(private val lessons: List<Schedule>, private val students: List<Student>): Screen {
+data class WeeksScreen(
+    private val lessons: List<Schedule>,
+    private val students: List<Student>,
+    private val attendance: List<Attendance>
+): Screen {
     @Composable
     override fun Content() {
         val navigator  = LocalNavigator.currentOrThrow
@@ -55,12 +60,7 @@ data class WeeksScreen(private val lessons: List<Schedule>, private val students
         Column(
             modifier = Modifier.fillMaxSize().background(AppTheme.colors.white).padding(32.dp)
         ) {
-            state.error?.let {
-                ErrorDialog(
-                    onDismiss = viewModel::resetError,
-                    text = it
-                )
-            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -83,7 +83,7 @@ data class WeeksScreen(private val lessons: List<Schedule>, private val students
                     }
                     items(weeks.sortedByDescending { it.startDate }) { week ->
                         ScheduleCard(text = week.formatWeek(), onClick = {
-                            navigator.push(ScheduleScreen(lessons, students, week))
+                            navigator.push(ScheduleScreen(lessons, students, week, attendance))
                         })
                         Spacer(Modifier.height(10.dp))
                     }

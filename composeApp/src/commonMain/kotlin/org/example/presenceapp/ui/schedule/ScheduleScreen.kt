@@ -19,22 +19,25 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.plus
-import org.example.presenceapp.someData.CurrentDay
-import org.example.presenceapp.someData.Schedule
-import org.example.presenceapp.someData.Student
+import org.example.presenceapp.domain.models.Attendance
+import org.example.presenceapp.domain.someData.Schedule
+import org.example.presenceapp.domain.someData.Student
 import org.example.presenceapp.ui.attendance.AttendanceScreen
 import org.example.presenceapp.ui.commons.CommonTopBar
-import org.example.presenceapp.ui.commons.ErrorDialog
 import org.example.presenceapp.ui.schedule.components.ScheduleDaySelector
 import org.example.presenceapp.ui.schedule.components.ScheduleLessonList
 import org.example.presenceapp.ui.theme.AppTheme
 import org.example.presenceapp.ui.types.ScreenType
 import org.example.project.domain.models.Week
+import org.example.project.domain.models.formatDay
 
-data class ScheduleScreen(private val lessons: List<Schedule>, private val students: List<Student>, private val week: Week): Screen {
+data class ScheduleScreen(
+    private val lessons: List<Schedule>,
+    private val students: List<Student>,
+    private val week: Week,
+    private val attendance: List<Attendance>
+): Screen {
     @Composable
     override fun Content() {
         val screenModel = rememberScreenModel { ScheduleScreenModel() }
@@ -51,6 +54,7 @@ data class ScheduleScreen(private val lessons: List<Schedule>, private val stude
             pageCount = { daysOfWeek.size }
         )
         val currentPage = pagerState.currentPage + pagerState.currentPageOffsetFraction
+        val currentDay = week.startDate.plus(currentPage.toInt(), DateTimeUnit.DAY)
 
 
         LaunchedEffect(pagerState) {
@@ -77,7 +81,7 @@ data class ScheduleScreen(private val lessons: List<Schedule>, private val stude
                 topBar = {
                     CommonTopBar(
                         screenType = ScreenType.SCHEDULE,
-                        text = week.startDate.plus(currentPage.toInt(), DateTimeUnit.DAY).toString()
+                        text = currentDay.formatDay()
                     )
                 },
             ) { padding ->
@@ -98,7 +102,7 @@ data class ScheduleScreen(private val lessons: List<Schedule>, private val stude
                                 .sortedBy { it.lessonNumber },
                             onLessonClick = { lesson ->
                                 screenModel.selectLesson(lesson)
-                                navigator.push(AttendanceScreen(lesson, students))
+                                navigator.push(AttendanceScreen(lesson, students, attendance, currentDay))
                             }
                         )
                     }

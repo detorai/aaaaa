@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.presenceapp.someData.SampleData.lessonTimes
+import org.example.presenceapp.domain.someData.SampleData.lessonTimes
 import org.example.presenceapp.ui.theme.AppTheme
 
 @Composable

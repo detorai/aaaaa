@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.example.presenceapp.someData.Student
+import org.example.presenceapp.domain.someData.Student
 import org.example.presenceapp.ui.attendance.AttendanceScreenModel
 import org.example.presenceapp.ui.theme.AppTheme
 
@@ -41,16 +41,14 @@ fun AttendanceColumn(
     modifier: Modifier,
     screenModel: AttendanceScreenModel,
 ) {
-    val groups by screenModel.groupedStudents.collectAsState()
-    val attendanceMap by screenModel.attendanceMap.collectAsState()
-
+    var state = screenModel.state.collectAsState().value
     var expanded by remember { mutableStateOf<Int?>(null) }
     val selectedStudents = remember { mutableStateOf<Set<Int>>(emptySet()) }
     var isSelectionMode by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
 
-    LaunchedEffect(groups) {
+    LaunchedEffect(state.studentCard) {
         listState.scrollToItem(0)
     }
 
@@ -73,89 +71,70 @@ fun AttendanceColumn(
                 .fillMaxSize()
                 .padding(bottom = if (isSelectionMode) 80.dp else 0.dp)
         ) {
-            fun renderStudentGroup(
-                group: List<Student>,
-                title: String
-            ) {
-                if (group.isNotEmpty()) {
-                    item {
+            items(
+                items = state.studentCard,
+                key = {it.studentId}
+            ) { studentCard ->
+                val isSelected = selectedStudents.value.contains(studentCard.studentId)
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(72.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    isSelectionMode = true
+                                    selectedStudents.value = selectedStudents.value.toMutableSet().apply {
+                                        if (contains(studentCard.studentId)) remove(studentCard.studentId) else add(studentCard.studentId)
+                                    }
+                                },
+                                onTap = {
+                                    if (isSelectionMode) {
+                                        selectedStudents.value = selectedStudents.value.toMutableSet().apply {
+                                            if (contains(studentCard.studentId)) remove(studentCard.studentId) else add(studentCard.studentId)
+                                        }
+                                    } else {
+                                        expanded = studentCard.studentId
+                                    }
+                                }
+                            )
+                        }
+                        .border(
+                            width = 1.dp,
+                            color = if (isSelected) AppTheme.colors.black else AppTheme.colors.gray,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = studentCard.studentName,
+                        color = AppTheme.colors.black,
+                        style = AppTheme.typography.messageFrag,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .widthIn(min = 80.dp)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .padding(8.dp)
+                    ) {
                         Text(
-                            text = title,
-                            style = AppTheme.typography.name,
+                            text = when (studentCard.attendanceStatus.name) {
+                                "Присутствует" -> "присут"
+                                "Отсутствует" -> "отсут"
+                                else -> "не указан"
+                            },
                             color = AppTheme.colors.black,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                                .wrapContentWidth(Alignment.CenterHorizontally)
+                            style = AppTheme.typography.message,
+                            textAlign = TextAlign.Center,
                         )
                     }
-                    items(group, key = { student -> student.id }) { student ->
-                        val isSelected = selectedStudents.value.contains(student.id)
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(72.dp)
-                                .pointerInput(Unit) {
-                                    detectTapGestures(
-                                        onLongPress = {
-                                            isSelectionMode = true
-                                            selectedStudents.value = selectedStudents.value.toMutableSet().apply {
-                                                if (contains(student.id)) remove(student.id) else add(student.id)
-                                            }
-                                        },
-                                        onTap = {
-                                            if (isSelectionMode) {
-                                                selectedStudents.value = selectedStudents.value.toMutableSet().apply {
-                                                    if (contains(student.id)) remove(student.id) else add(student.id)
-                                                }
-                                            }
-                                            if (!isSelectionMode && attendanceMap[student.id] == AttendanceScreenModel.ABSENT) {
-                                                expanded = student.id
-                                            }
-                                        }
-                                    )
-                                }
-                                .border(
-                                    width = 1.dp,
-                                    color = if (isSelected) AppTheme.colors.black else AppTheme.colors.gray,
-                                    shape = RoundedCornerShape(16.dp)
-                                )
-                                .padding(12.dp)
-                        ) {
-                            Text(
-                                text = student.name,
-                                color = AppTheme.colors.black,
-                                style = AppTheme.typography.messageFrag,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(8.dp)
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .widthIn(min = 80.dp)
-                                    .wrapContentWidth(Alignment.CenterHorizontally)
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    text = when (attendanceMap[student.id]) {
-                                        AttendanceScreenModel.PRESENT -> "присут"
-                                        AttendanceScreenModel.ABSENT -> "отсут"
-                                        else -> "не указан"
-                                    },
-                                    color = AppTheme.colors.black,
-                                    style = AppTheme.typography.message,
-                                    textAlign = TextAlign.Center,
-                                )
-                            }
-                        }
-                    }
                 }
-            }
-
-            groups.forEach { (title, students) ->
-                renderStudentGroup(students, title)
             }
         }
 
@@ -179,35 +158,35 @@ fun AttendanceColumn(
                             contentColor = AppTheme.colors.white
                         ),
                         onClick = {
-                            screenModel.updateAttendanceForSelected(selectedStudents.value, status)
+                            screenModel.updateAttendanceForSelected(
+                                selectedStudents.value,
+                                status
+                            )
                             isSelectionMode = false
                             selectedStudents.value = emptySet()
                         }
                     ) {
-                        Text(
-                            text = label,
-                            color = AppTheme.colors.white
-                        )
+                        Text(text = label, color = AppTheme.colors.white)
                     }
                 }
             }
         }
 
         expanded?.let { studentId ->
-            val student = groups
-                .flatMap { it.second }
-                .find { it.id == studentId }
-
-            if (student != null) {
+            val student = state.studentCard.find { it.studentId == studentId }
+            student?.let {
                 AttendanceDialog(
                     expanded = true,
                     onDismiss = { expanded = null },
                     onStatusSelected = { newStatus ->
-                        screenModel.updateAttendance(student.id, newStatus)
+                        screenModel.updateAttendance(studentId, newStatus)
                         expanded = null
                     },
                     onStatusForAll = { newStatus ->
-                        screenModel.updateAttendanceForSelected(selectedStudents.value, newStatus)
+                        screenModel.updateAttendanceForSelected(
+                            selectedStudents.value,
+                            newStatus
+                        )
                         expanded = null
                     }
                 )
@@ -215,3 +194,146 @@ fun AttendanceColumn(
         }
     }
 }
+
+
+//fun renderStudentGroup(
+//    group: List<Student>,
+//    title: String
+//) {
+//    if (group.isNotEmpty()) {
+//        item {
+//            Text(
+//                text = title,
+//                style = AppTheme.typography.name,
+//                color = AppTheme.colors.black,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(vertical = 8.dp)
+//                    .wrapContentWidth(Alignment.CenterHorizontally)
+//            )
+//        }
+//        items(group, key = { student -> student.id }) { student ->
+//            val isSelected = selectedStudents.value.contains(student.id)
+//
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(72.dp)
+//                    .pointerInput(Unit) {
+//                        detectTapGestures(
+//                            onLongPress = {
+//                                isSelectionMode = true
+//                                selectedStudents.value = selectedStudents.value.toMutableSet().apply {
+//                                    if (contains(student.id)) remove(student.id) else add(student.id)
+//                                }
+//                            },
+//                            onTap = {
+//                                if (isSelectionMode) {
+//                                    selectedStudents.value = selectedStudents.value.toMutableSet().apply {
+//                                        if (contains(student.id)) remove(student.id) else add(student.id)
+//                                    }
+//                                }
+//                                if (!isSelectionMode && attendanceMap[student.id] == AttendanceScreenModel.ABSENT) {
+//                                    expanded = student.id
+//                                }
+//                            }
+//                        )
+//                    }
+//                    .border(
+//                        width = 1.dp,
+//                        color = if (isSelected) AppTheme.colors.black else AppTheme.colors.gray,
+//                        shape = RoundedCornerShape(16.dp)
+//                    )
+//                    .padding(12.dp)
+//            ) {
+//                Text(
+//                    text = student.name,
+//                    color = AppTheme.colors.black,
+//                    style = AppTheme.typography.messageFrag,
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(8.dp)
+//                )
+//                Box(
+//                    modifier = Modifier
+//                        .widthIn(min = 80.dp)
+//                        .wrapContentWidth(Alignment.CenterHorizontally)
+//                        .padding(8.dp)
+//                ) {
+//                    Text(
+//                        text = when (attendanceMap[student.id]) {
+//                            AttendanceScreenModel.PRESENT -> "присут"
+//                            AttendanceScreenModel.ABSENT -> "отсут"
+//                            else -> "не указан"
+//                        },
+//                        color = AppTheme.colors.black,
+//                        style = AppTheme.typography.message,
+//                        textAlign = TextAlign.Center,
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//groups.forEach { (title, students) ->
+//    renderStudentGroup(students, title)
+//}
+//}
+//
+//if (isSelectionMode) {
+//    Row(
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .align(Alignment.BottomCenter)
+//            .background(color = AppTheme.colors.white)
+//            .padding(vertical = 8.dp, horizontal = 16.dp)
+//            .padding(bottom = 16.dp)
+//    ) {
+//        listOf(
+//            AttendanceScreenModel.PRESENT to "Присутствующие",
+//            AttendanceScreenModel.ABSENT to "Отсутствующие"
+//        ).forEach { (status, label) ->
+//            Button(
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = AppTheme.colors.black,
+//                    contentColor = AppTheme.colors.white
+//                ),
+//                onClick = {
+//                    screenModel.updateAttendanceForSelected(selectedStudents.value, status)
+//                    isSelectionMode = false
+//                    selectedStudents.value = emptySet()
+//                }
+//            ) {
+//                Text(
+//                    text = label,
+//                    color = AppTheme.colors.white
+//                )
+//            }
+//        }
+//    }
+//}
+//
+//expanded?.let { studentId ->
+//    val student = groups
+//        .flatMap { it.second }
+//        .find { it.id == studentId }
+//
+//    if (student != null) {
+//        AttendanceDialog(
+//            expanded = true,
+//            onDismiss = { expanded = null },
+//            onStatusSelected = { newStatus ->
+//                screenModel.updateAttendance(student.id, newStatus)
+//                expanded = null
+//            },
+//            onStatusForAll = { newStatus ->
+//                screenModel.updateAttendanceForSelected(selectedStudents.value, newStatus)
+//                expanded = null
+//            }
+//        )
+//    }
+//}
+//}

@@ -22,16 +22,23 @@ import org.example.presenceapp.ui.types.ButtonType
 fun CommonIconButton(
     background: Color,
     icon: Painter,
-    switchedIcon: Painter? = null,
+    iconName: Painter? = null,
+    iconO: Painter? = null,
+    iconP: Painter? = null,
     iconColor: Color,
     buttonType: ButtonType,
-    selectedIconState: State<Boolean>? = null,
+    selectedIconState: State<Int>? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val currentIcon = when {
         buttonType == ButtonType.SWITCHABLE && selectedIconState != null -> {
-            if (selectedIconState.value) icon else switchedIcon ?: icon
+            when (selectedIconState.value) {
+                0 -> { iconO?:icon}
+                1 -> {iconP?:icon}
+                2 -> {iconName?:icon}
+                else -> icon
+            }
         }
         else -> icon
     }

@@ -2,8 +2,8 @@ package org.example.presenceapp.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.example.presenceapp.data.remote.AuthApiImpl
-import org.example.presenceapp.data.remote.dto.auth.AuthRequestDto
+import org.example.presenceapp.data.remote.impl.AuthApiImpl
+import org.example.presenceapp.data.model.dto.auth.AuthRequestDto
 import org.example.presenceapp.domain.models.ResponseState
 import org.example.project.data.local.AuthManager
 

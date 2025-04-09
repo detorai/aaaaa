@@ -20,6 +20,7 @@ class WeeksViewModel: ScreenModel {
 
     init {
         loadWeeks()
+
     }
 
     private fun loadWeeks() {

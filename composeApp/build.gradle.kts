@@ -16,8 +16,7 @@ plugins {
 sqldelight {
     databases {
         create("ScheduleDatabase") {
-            packageName = "org.example.presenceapp.db"
-
+            packageName = "org.example.presenceapp.data.local.db"
         }
     }
 }
@@ -112,6 +111,7 @@ kotlin {
                 // koin
                 implementation(libs.koin.core)
 
+                implementation("app.cash.sqldelight:primitive-adapters:$sqldelightVersion")
                 implementation("app.cash.sqldelight:runtime:$sqldelightVersion")
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")
             }

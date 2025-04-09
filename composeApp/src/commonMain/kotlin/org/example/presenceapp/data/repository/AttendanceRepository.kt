@@ -1,9 +1,11 @@
 package org.example.presenceapp.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.example.presenceapp.data.local.LocalDataSource
-import org.example.presenceapp.data.remote.AttendanceApiImpl
-import org.example.presenceapp.domain.models.Attendance
+import org.example.presenceapp.data.remote.impl.AttendanceApiImpl
+import org.example.presenceapp.domain.models.AttendanceType
+import org.example.presenceapp.domain.models.ResponseState
 
 class AttendanceRepository(
     private val localDataSource: LocalDataSource,
@@ -23,5 +25,19 @@ class AttendanceRepository(
 
     suspend fun syncWithServer() {
 
+    }
+
+    fun getAttendanceType(): Flow<ResponseState> = flow {
+        return@flow try {
+            val result = attendanceApiImpl.getAttendanceType().map {
+                AttendanceType(
+                    id = it.id,
+                    name = it.name
+                )
+            }
+            emit(ResponseState.Success(result))
+        } catch (e: Exception) {
+            emit (ResponseState.Error(e.message.toString()))
+        }
     }
 }
