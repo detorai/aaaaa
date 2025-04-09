@@ -9,25 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import kotlinx.datetime.LocalDate
-import org.example.presenceapp.data.local.LocalDataSource
-import org.example.presenceapp.getPlatformContext
-import org.example.presenceapp.data.local.storage.attendance.AttendanceStorageProvider
-import org.example.presenceapp.data.remote.impl.AttendanceApiImpl
-import org.example.presenceapp.data.repository.AttendanceRepository
-import org.example.presenceapp.data.remote.network.KtorfitClient
 import org.example.presenceapp.domain.models.Attendance
 import org.example.presenceapp.domain.someData.Schedule
 import org.example.presenceapp.domain.someData.SelectedLessonHolder
 import org.example.presenceapp.domain.someData.Student
 import org.example.presenceapp.ui.attendance.components.AttendanceColumn
-import org.example.presenceapp.ui.types.ScreenType
 import org.example.presenceapp.ui.commons.CommonTopBar
 import org.example.presenceapp.ui.commons.ErrorDialog
 import org.example.presenceapp.ui.theme.AppTheme
+import org.example.presenceapp.ui.types.ScreenType
 
 class AttendanceScreen(
     private val selectedLesson: Schedule,

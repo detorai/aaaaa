@@ -31,11 +31,13 @@ class AttendanceScreenModel(
     }
 
     init {
-        getAttendanceType()
-        state.update {
-            it.copy(
-                studentCard = combineAndSortData()
-            )
+        screenModelScope.launch {
+            getAttendanceType()
+            state.update {
+                it.copy(
+                    studentCard = combineAndSortData()
+                )
+            }
         }
     }
 
@@ -48,25 +50,31 @@ class AttendanceScreenModel(
     }
 
     private fun combineAndSortData(): List<StudentAttendanceCard> {
+        val currentState = state.value
 
-        val presenceStatusId = state.value.attendanceTypes
-            .firstOrNull { it.id == 1 }
+        if (currentState.attendanceTypes.isEmpty()) {
+            println("Attendance types not loaded yet!")
+            return emptyList()
+        }
 
-        val absenceStatusId = state.value.attendanceTypes
-            .firstOrNull{ it.id == 3 }
+        val presenceStatusId = currentState.attendanceTypes
+            .firstOrNull { it.id == 1 } ?: throw IllegalStateException("Presence status not found")
 
-        return state.value.attendance.filter {
-             it.presenceDate == state.value.currentDay && it.scheduleId == state.value.lesson?.id
+        val absenceStatusId = currentState.attendanceTypes
+            .firstOrNull{ it.id == 3 } ?: throw IllegalStateException("Absence status not found")
+
+        return currentState.attendance.filter {
+             it.presenceDate == currentState.currentDay && it.scheduleId == currentState.lesson?.id
         }.mapNotNull { attendance ->
-            val student = state.value.groupList.firstOrNull{it.id == attendance.studentId}
-            val status = state.value.attendanceTypes.firstOrNull{it.id == attendance.attendanceType}
+            val student = currentState.groupList.firstOrNull{it.id == attendance.studentId}
+            val status = currentState.attendanceTypes.firstOrNull{it.id == attendance.attendanceType}
 
             if (student != null && status != null){
                 StudentAttendanceCard(
                     studentId = student.id,
                     studentName = student.name,
                     attendanceStatus = status,
-                    scheduleInfo = state.value.lesson?.let {
+                    scheduleInfo = currentState.lesson?.let {
                         StudentAttendanceCard.ScheduleInfo(
                             lessonNumber = it.lessonNumber,
                             audience = it.audience,
@@ -77,19 +85,23 @@ class AttendanceScreenModel(
                 )
             } else null
         }.sortedWith(
-            when (state.value.sortedType) {
+            when (currentState.sortedType) {
                 SortType.BY_PRESENCE -> compareByDescending {
-                    it.attendanceStatus.id == presenceStatusId?.id
+                    it.attendanceStatus.id == presenceStatusId.id
                 }
                 SortType.BY_ABSENCE -> compareByDescending {
-                    it.attendanceStatus.id == absenceStatusId?.id
+                    it.attendanceStatus.id == absenceStatusId.id
                 }
                 SortType.BY_NAME -> compareBy { it.studentName }
             }
         )
     }
     fun changeSortType(newSortType: SortType) {
-        state.value.sortedType = newSortType
+        state.update {
+            it.copy(
+                sortedType = newSortType
+            )
+        }
     }
 
     fun updateAttendance(studentId: Int, status: String) {
@@ -120,10 +132,6 @@ class AttendanceScreenModel(
             )
         }
     }
-//
-//    fun changeSortType(newSortType: SortType) {
-//        _sortType.value = newSortType
-//    }
 
     fun getGroup(group: List<Student>, attendance: List<Attendance>, day: LocalDate, lesson: Schedule){
         screenModelScope.launch {
@@ -138,24 +146,23 @@ class AttendanceScreenModel(
         }
     }
 
-    private fun getAttendanceType(){
-        screenModelScope.launch {
-            val result = attendanceRepository.getAttendanceType()
-            result.collect{response ->
-                when (response) {
-                    is ResponseState.Success<*> -> {
-                        state.update {
-                            it.copy(
-                                attendanceTypes = response.data as List<AttendanceType>
-                            )
-                        }
+    private suspend fun getAttendanceType(){
+        val result = attendanceRepository.getAttendanceType()
+        result.collect{response ->
+            when (response) {
+                is ResponseState.Success<*> -> {
+                    val types = (response.data as? List<AttendanceType>) ?: emptyList()
+                    state.update {
+                        it.copy(
+                            attendanceTypes = types
+                        )
                     }
-                    is ResponseState.Error -> {
-                        state.update {
-                            it.copy(
-                                error = response.error
-                            )
-                        }
+                }
+                is ResponseState.Error -> {
+                    state.update {
+                        it.copy(
+                            error = response.error
+                        )
                     }
                 }
             }

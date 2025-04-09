@@ -49,7 +49,7 @@ class ScheduleRepository(
             val result = scheduleApiImpl.getGroupPresence(groupId).map {
                 Attendance(
                     scheduleId = it.scheduleId,
-                    studentId = it.scheduleId,
+                    studentId = it.studentId,
                     presenceId = it.presenceId,
                     presenceDate = it.presenceDate,
                     attendanceType = it.attendanceTypeId
